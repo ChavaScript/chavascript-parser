@@ -121,7 +121,7 @@ export const types = {
   _finally: kw("finally"),
   _for: kw("for", {isLoop: true}),
   _function: kw("function", startsExpr),
-  _if: kw("if"),
+  _if: kw("ip"),
   _return: kw("return", beforeExpr),
   _switch: kw("switch"),
   _throw: kw("throw", beforeExpr),

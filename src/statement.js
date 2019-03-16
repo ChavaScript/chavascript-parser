@@ -100,7 +100,7 @@ pp.parseStatement = function(context, topLevel, exports) {
     // Function as sole body of either an if statement or a labeled statement
     // works, but not when it is part of a labeled statement that is the sole
     // body of an if statement.
-    if ((context && (this.strict || context !== "if" && context !== "label")) && this.options.ecmaVersion >= 6) this.unexpected()
+    if ((context && (this.strict || context !== "ip" && context !== "label")) && this.options.ecmaVersion >= 6) this.unexpected()
     return this.parseFunctionStatement(node, false, !context)
   case tt._class:
     if (context) this.unexpected()
@@ -254,8 +254,8 @@ pp.parseIfStatement = function(node) {
   this.next()
   node.test = this.parseParenExpression()
   // allow function declarations in branches, but only in non-strict mode
-  node.consequent = this.parseStatement("if")
-  node.alternate = this.eat(tt._else) ? this.parseStatement("if") : null
+  node.consequent = this.parseStatement("ip")
+  node.alternate = this.eat(tt._else) ? this.parseStatement("ip") : null
   return this.finishNode(node, "IfStatement")
 }
 
