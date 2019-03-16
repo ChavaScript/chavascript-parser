@@ -9,3 +9,4 @@
 /acorn-walk/dist
 /yarn.lock
 .idea/
+dist/
