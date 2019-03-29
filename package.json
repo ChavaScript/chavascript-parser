@@ -3,7 +3,7 @@
   "description": "ChavaScript Token Parser",
   "main": "dist/chavascript-parser.js",
   "module": "dist/chavascript-parser.mjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/ChavaScript/chavascript-parser"
