@@ -1,4 +1,5 @@
 import {reservedWords, keywords} from "./identifier"
+import {translateVariables} from "./localization"
 import {types as tt} from "./tokentype"
 import {lineBreak} from "./whitespace"
 import {getOptions} from "./options"
@@ -20,7 +21,7 @@ export class Parser {
     let reservedStrict = (reserved ? reserved + " " : "") + reservedWords.strict
     this.reservedWordsStrict = wordsRegexp(reservedStrict)
     this.reservedWordsStrictBind = wordsRegexp(reservedStrict + " " + reservedWords.strictBind)
-    this.input = String(input)
+    this.input = translateVariables(String(input))
 
     // Used to signal to callers of `readWord1` whether the word
     // contained any escape sequences. This is needed because words with

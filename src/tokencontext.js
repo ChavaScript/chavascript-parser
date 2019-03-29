@@ -5,6 +5,7 @@
 import {Parser} from "./state"
 import {types as tt} from "./tokentype"
 import {lineBreak} from "./whitespace"
+import {localizedKeyword} from "./localization"
 
 export class TokContext {
   constructor(token, isExpr, preserveSpace, override, generator) {
@@ -23,10 +24,10 @@ export const types = {
   p_stat: new TokContext("(", false),
   p_expr: new TokContext("(", true),
   q_tmpl: new TokContext("`", true, true, p => p.tryReadTemplateToken()),
-  f_stat: new TokContext("function", false),
-  f_expr: new TokContext("function", true),
-  f_expr_gen: new TokContext("function", true, false, null, true),
-  f_gen: new TokContext("function", false, false, null, true)
+  f_stat: new TokContext(localizedKeyword("function"), false),
+  f_expr: new TokContext(localizedKeyword("function"), true),
+  f_expr_gen: new TokContext(localizedKeyword("function"), true, false, null, true),
+  f_gen: new TokContext(localizedKeyword("function"), false, false, null, true)
 }
 
 const pp = Parser.prototype
@@ -59,7 +60,7 @@ pp.braceIsBlock = function(prevType) {
 pp.inGeneratorContext = function() {
   for (let i = this.context.length - 1; i >= 1; i--) {
     let context = this.context[i]
-    if (context.token === "function")
+    if (context.token === localizedKeyword("function"))
       return context.generator
   }
   return false
@@ -83,7 +84,7 @@ tt.parenR.updateContext = tt.braceR.updateContext = function() {
     return
   }
   let out = this.context.pop()
-  if (out === types.b_stat && this.curContext().token === "function") {
+  if (out === types.b_stat && this.curContext().token === localizedKeyword("function")) {
     out = this.context.pop()
   }
   this.exprAllowed = !out.isExpr

@@ -1,23 +1,38 @@
 // Reserved word lists for various dialects of the language
 
+import {localizedKeyword} from "./localization"
+
 export const reservedWords = {
-  3: "abstract boolean byte char class double enum export extends final float goto implements import int interface long native package private protected public short static super synchronized throws transient volatile",
-  5: "class enum extends super const export import",
-  6: "enum",
-  strict: "implements interface let package private protected public static yield",
-  strictBind: "eval arguments"
+  3: regexpize(["abstract", "boolean", "byte", "char", "class", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile"]),
+  5: regexpize(["class", "enum", "extends", "super", "const", "export", "import"]),
+  6: regexpize(["enum"]),
+  strict: regexpize(["implements", "interface", "let", "package", "private", "protected", "public", "static", "yield"]),
+  strictBind: regexpize(["eval", "arguments"])
 }
 
 // And the keywords
 
-const ecma5AndLessKeywords = "break case catch continue debugger default do else finally for function if return switch throw try var while with null true false instanceof typeof void delete new in this"
+const ecma5AndLessKeywordsArray = ["break", "case", "catch", "continue", "debugger", "default", "do", "else", "finally", "for", "function", "if", "return", "switch", "throw", "try", "var", "while", "with", "null", "true", "false", "instanceof", "typeof", "void", "delete", "new", "in", "this"]
+const ecma6KeywordsArray = ["const", "class", "extends", "export", "import", "super"]
+
+const ecma5AndLessKeywords = regexpize(ecma5AndLessKeywordsArray)
+const ecma6Keywords = regexpize(ecma6KeywordsArray)
 
 export const keywords = {
   5: ecma5AndLessKeywords,
-  6: ecma5AndLessKeywords + " const class extends export import super"
+  6: ecma5AndLessKeywords + ' ' + ecma6Keywords
 }
 
-export const keywordRelationalOperator = /^in(stanceof)?$/
+export function isLet(word) {
+  return localizedKeyword("let") === word
+}
+
+function regexpize(arr) {
+  return arr.map(keyword => localizedKeyword(keyword)).join(" ")
+}
+
+const relationalOperators = regexpize(["in", "instanceof"]).split(" ").map(keyword => `^${keyword}$`).join("|")
+export const keywordRelationalOperator = new RegExp(relationalOperators)
 
 // ## Character categories
 

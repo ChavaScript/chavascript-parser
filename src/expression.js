@@ -217,7 +217,7 @@ pp.parseMaybeUnary = function(refDestructuringErrors, sawUnary) {
     node.argument = this.parseMaybeUnary(null, true)
     this.checkExpressionErrors(refDestructuringErrors, true)
     if (update) this.checkLVal(node.argument)
-    else if (this.strict && node.operator === "delete" &&
+    else if (this.strict && node.operator === localizedKeyword("delete") &&
              node.argument.type === "Identifier")
       this.raiseRecoverable(node.start, "Deleting local variable in strict mode")
     else sawUnary = true
@@ -882,7 +882,7 @@ pp.parseIdent = function(liberal, isBinding) {
     // `class` and `function` keywords push new context into this.context.
     // But there is no chance to pop the context if the keyword is consumed as an identifier such as a property name.
     // If the previous token is a dot, this does not apply because the context-managing code already ignored the keyword
-    if ((node.name === "class" || node.name === "function") &&
+    if ((node.name === localizedKeyword("class") || node.name === localizedKeyword("function")) &&
         (this.lastTokEnd !== this.lastTokStart + 1 || this.input.charCodeAt(this.lastTokStart) !== 46)) {
       this.context.pop()
     }

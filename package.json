@@ -1,39 +1,22 @@
 {
-  "name": "acorn",
-  "description": "ECMAScript parser",
-  "homepage": "https://github.com/acornjs/acorn",
-  "main": "dist/acorn.js",
-  "module": "dist/acorn.mjs",
-  "version": "6.1.1",
-  "engines": {
-    "node": ">=0.4.0"
-  },
-  "maintainers": [
-    {
-      "name": "Marijn Haverbeke",
-      "email": "marijnh@gmail.com",
-      "web": "https://marijnhaverbeke.nl"
-    },
-    {
-      "name": "Ingvar Stepanyan",
-      "email": "me@rreverser.com",
-      "web": "https://rreverser.com/"
-    },
-    {
-      "name": "Adrian Heine",
-      "web": "http://adrianheine.de"
-    }
-  ],
+  "name": "chavascript-parser",
+  "description": "ChavaScript Token Parser",
+  "main": "dist/chavascript-parser.js",
+  "module": "dist/chavascript-parser.mjs",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acornjs/acorn.git"
+    "url": "https://github.com/ChavaScript/chavascript-parser"
   },
   "license": "MIT",
   "scripts": {
-    "build:main": "rollup -c acorn/rollup.config.js",
-    "build:bin": "rollup -c acorn/rollup.config.bin.js"
+    "clean": "rm -rf dist",
+    "build": "rollup -c rollup.config.js",
+    "clean-build": "npm run clean && npm run build",
+    "prepublish": "npm run clean-build"
   },
-  "bin": {
-    "acorn": "./bin/acorn"
+  "devDependencies": {
+    "rollup": "^0.45.0",
+    "rollup-plugin-buble": "^0.16.0"
   }
 }

@@ -1,4 +1,5 @@
-import {isIdentifierStart, isIdentifierChar} from "./identifier"
+import {isIdentifierStart, isIdentifierChar, isLet} from "./identifier"
+import {localizeWord} from "./localization"
 import {types as tt, keywords as keywordTypes} from "./tokentype"
 import {Parser} from "./state"
 import {SourceLocation} from "./locutil"
@@ -376,7 +377,7 @@ pp.readRegexp = function() {
     if (!escaped) {
       if (ch === "[") inClass = true
       else if (ch === "]" && inClass) inClass = false
-      else if (ch === "/" && !inClass) break
+      else if (ch === localizedOperator("/") && !inClass) break
       escaped = ch === "\\"
     } else escaped = false
     ++this.pos
@@ -698,6 +699,11 @@ pp.readWord = function() {
   if (this.keywords.test(word)) {
     if (this.containsEsc) this.raiseRecoverable(this.start, "Escape sequence in keyword " + word)
     type = keywordTypes[word]
+    word = type.label
+  } else if (isLet(word)) {
+    word = "let"
+  } else {
+    word = localizeWord(word)
   }
   return this.finishToken(type, word)
 }
