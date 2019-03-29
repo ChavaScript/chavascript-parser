@@ -12,7 +12,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rollup -c rollup.config.js",
-    "clean-build": "npm run clean && npm run build"
+    "clean-build": "npm run clean && npm run build",
+    "prepublish": "npm run clean-build"
   },
   "devDependencies": {
     "rollup": "^0.45.0",
