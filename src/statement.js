@@ -5,6 +5,7 @@ import {isIdentifierStart, isIdentifierChar, keywordRelationalOperator} from "./
 import {has} from "./util"
 import {DestructuringErrors} from "./parseutil"
 import {functionFlags, SCOPE_SIMPLE_CATCH, BIND_SIMPLE_CATCH, BIND_LEXICAL, BIND_VAR, BIND_FUNCTION} from "./scopeflags"
+import {localizedKeyword} from "./localization"
 
 const pp = Parser.prototype
 
@@ -68,7 +69,7 @@ pp.isAsyncFunction = function() {
   let skip = skipWhiteSpace.exec(this.input)
   let next = this.pos + skip[0].length
   return !lineBreak.test(this.input.slice(this.pos, next)) &&
-    this.input.slice(next, next + 8) === "function" &&
+    this.input.slice(next, next + 8) === localizedKeyword("function") &&
     (next + 8 === this.input.length || !isIdentifierChar(this.input.charAt(next + 8)))
 }
 
@@ -100,7 +101,7 @@ pp.parseStatement = function(context, topLevel, exports) {
     // Function as sole body of either an if statement or a labeled statement
     // works, but not when it is part of a labeled statement that is the sole
     // body of an if statement.
-    if ((context && (this.strict || context !== "ip" && context !== "label")) && this.options.ecmaVersion >= 6) this.unexpected()
+    if ((context && (this.strict || context !== localizedKeyword("if") && context !== "label")) && this.options.ecmaVersion >= 6) this.unexpected()
     return this.parseFunctionStatement(node, false, !context)
   case tt._class:
     if (context) this.unexpected()
@@ -112,7 +113,7 @@ pp.parseStatement = function(context, topLevel, exports) {
   case tt._try: return this.parseTryStatement(node)
   case tt._const: case tt._var:
     kind = kind || this.value
-    if (context && kind !== "var") this.unexpected()
+    if (context && kind !== localizedKeyword("var")) this.unexpected()
     return this.parseVarStatement(node, kind)
   case tt._while: return this.parseWhileStatement(node)
   case tt._with: return this.parseWithStatement(node)
@@ -148,7 +149,7 @@ pp.parseStatement = function(context, topLevel, exports) {
 }
 
 pp.parseBreakContinueStatement = function(node, keyword) {
-  let isBreak = keyword === "break"
+  let isBreak = keyword === localizedKeyword("break")
   this.next()
   if (this.eat(tt.semi) || this.insertSemicolon()) node.label = null
   else if (this.type !== tt.name) this.unexpected()
@@ -180,7 +181,7 @@ pp.parseDebuggerStatement = function(node) {
 pp.parseDoStatement = function(node) {
   this.next()
   this.labels.push(loopLabel)
-  node.body = this.parseStatement("do")
+  node.body = this.parseStatement(localizedKeyword("do"))
   this.labels.pop()
   this.expect(tt._while)
   node.test = this.parseParenExpression()
@@ -216,7 +217,7 @@ pp.parseForStatement = function(node) {
     this.parseVar(init, true, kind)
     this.finishNode(init, "VariableDeclaration")
     if ((this.type === tt._in || (this.options.ecmaVersion >= 6 && this.isContextual("of"))) && init.declarations.length === 1 &&
-        !(kind !== "var" && init.declarations[0].init)) {
+        !(kind !== localizedKeyword("var") && init.declarations[0].init)) {
       if (this.options.ecmaVersion >= 9) {
         if (this.type === tt._in) {
           if (awaitAt > -1) this.unexpected(awaitAt)
@@ -254,8 +255,8 @@ pp.parseIfStatement = function(node) {
   this.next()
   node.test = this.parseParenExpression()
   // allow function declarations in branches, but only in non-strict mode
-  node.consequent = this.parseStatement("ip")
-  node.alternate = this.eat(tt._else) ? this.parseStatement("ip") : null
+  node.consequent = this.parseStatement(localizedKeyword("if"))
+  node.alternate = this.eat(tt._else) ? this.parseStatement(localizedKeyword("if")) : null
   return this.finishNode(node, "IfStatement")
 }
 
@@ -365,7 +366,7 @@ pp.parseWhileStatement = function(node) {
   this.next()
   node.test = this.parseParenExpression()
   this.labels.push(loopLabel)
-  node.body = this.parseStatement("while")
+  node.body = this.parseStatement(localizedKeyword("while"))
   this.labels.pop()
   return this.finishNode(node, "WhileStatement")
 }
@@ -374,7 +375,7 @@ pp.parseWithStatement = function(node) {
   if (this.strict) this.raise(this.start, "'with' in strict mode")
   this.next()
   node.object = this.parseParenExpression()
-  node.body = this.parseStatement("with")
+  node.body = this.parseStatement(localizedKeyword("with"))
   return this.finishNode(node, "WithStatement")
 }
 
@@ -387,7 +388,7 @@ pp.parseLabeledStatement = function(node, maybeName, expr, context) {
   for (let label of this.labels)
     if (label.name === maybeName)
       this.raise(expr.start, "Label '" + maybeName + "' is already declared")
-  let kind = this.type.isLoop ? "loop" : this.type === tt._switch ? "switch" : null
+  let kind = this.type.isLoop ? "loop" : this.type === tt._switch ? localizedKeyword("switch") : null
   for (let i = this.labels.length - 1; i >= 0; i--) {
     let label = this.labels[i]
     if (label.statementStart === node.start) {
@@ -436,7 +437,7 @@ pp.parseFor = function(node, init) {
   this.expect(tt.semi)
   node.update = this.type === tt.parenR ? null : this.parseExpression()
   this.expect(tt.parenR)
-  node.body = this.parseStatement("for")
+  node.body = this.parseStatement(localizedKeyword("for"))
   this.exitScope()
   this.labels.pop()
   return this.finishNode(node, "ForStatement")
@@ -457,7 +458,7 @@ pp.parseForIn = function(node, init) {
   node.left = init
   node.right = type === "ForInStatement" ? this.parseExpression() : this.parseMaybeAssign()
   this.expect(tt.parenR)
-  node.body = this.parseStatement("for")
+  node.body = this.parseStatement(localizedKeyword("for"))
   this.exitScope()
   this.labels.pop()
   return this.finishNode(node, type)
@@ -473,7 +474,7 @@ pp.parseVar = function(node, isFor, kind) {
     this.parseVarId(decl, kind)
     if (this.eat(tt.eq)) {
       decl.init = this.parseMaybeAssign(isFor)
-    } else if (kind === "const" && !(this.type === tt._in || (this.options.ecmaVersion >= 6 && this.isContextual("of")))) {
+    } else if (kind === localizedKeyword("const") && !(this.type === tt._in || (this.options.ecmaVersion >= 6 && this.isContextual("of")))) {
       this.unexpected()
     } else if (decl.id.type !== "Identifier" && !(isFor && (this.type === tt._in || this.isContextual("of")))) {
       this.raise(this.lastTokEnd, "Complex binding patterns require an initialization value")
@@ -487,11 +488,11 @@ pp.parseVar = function(node, isFor, kind) {
 }
 
 pp.parseVarId = function(decl, kind) {
-  if ((kind === "const" || kind === "let") && this.isContextual("let")) {
+  if ((kind === localizedKeyword("const") || kind === "let") && this.isContextual("let")) {
     this.raiseRecoverable(this.start, "let is disallowed as a lexically bound name")
   }
   decl.id = this.parseBindingAtom()
-  this.checkLVal(decl.id, kind === "var" ? BIND_VAR : BIND_LEXICAL, false)
+  this.checkLVal(decl.id, kind === localizedKeyword("var") ? BIND_VAR : BIND_LEXICAL, false)
 }
 
 const FUNC_STATEMENT = 1, FUNC_HANGING_STATEMENT = 2, FUNC_NULLABLE_ID = 4
@@ -663,7 +664,7 @@ pp.parseExport = function(node, exports) {
     return this.finishNode(node, "ExportAllDeclaration")
   }
   if (this.eat(tt._default)) { // export default ...
-    this.checkExport(exports, "default", this.lastTokStart)
+    this.checkExport(exports, localizedKeyword("default"), this.lastTokStart)
     let isAsync
     if (this.type === tt._function || (isAsync = this.isAsyncFunction())) {
       let fNode = this.startNode()
@@ -744,10 +745,10 @@ pp.checkVariableExport = function(exports, decls) {
 }
 
 pp.shouldParseExportStatement = function() {
-  return this.type.keyword === "var" ||
-    this.type.keyword === "const" ||
-    this.type.keyword === "class" ||
-    this.type.keyword === "function" ||
+  return this.type.keyword === localizedKeyword("var") ||
+    this.type.keyword === localizedKeyword("const") ||
+    this.type.keyword === localizedKeyword("class") ||
+    this.type.keyword === localizedKeyword("function") ||
     this.isLet() ||
     this.isAsyncFunction()
 }

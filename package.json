@@ -1,12 +1,12 @@
 {
-  "name": "parser",
-  "description": "HavaScript parser",
-  "main": "dist/acorn.js",
-  "module": "dist/acorn.mjs",
+  "name": "chavascript-parser",
+  "description": "ChavaScript Token Parser",
+  "main": "dist/chavascript-parser.js",
+  "module": "dist/chavascript-parser.mjs",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/havascript/parser.git"
+    "url": "https://github.com/ChavaScript/chavascript-parser"
   },
   "license": "MIT",
   "scripts": {

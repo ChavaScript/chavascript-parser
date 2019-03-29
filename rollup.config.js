@@ -2,13 +2,13 @@ import buble from "rollup-plugin-buble"
 
 export default {
   entry: "src/index.js",
-  moduleName: "acorn",
+  moduleName: "chavascript-parser",
   plugins: [
     buble({transforms: {dangerousForOf: true}})
   ],
   sourceMap: true,
   targets: [
-    {dest: "dist/acorn.js", format: "umd"},
-    {dest: "dist/acorn.mjs", format: "es"}
+    {dest: "dist/chavascript-parser.js", format: "umd"},
+    {dest: "dist/chavascript-parser.mjs", format: "es"}
   ]
 }
