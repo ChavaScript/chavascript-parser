@@ -19,6 +19,7 @@
 import {types as tt} from "./tokentype"
 import {Parser} from "./state"
 import {DestructuringErrors} from "./parseutil"
+import {localizedKeyword} from "./localization"
 import {lineBreak} from "./whitespace"
 import {functionFlags, SCOPE_ARROW, SCOPE_SUPER, SCOPE_DIRECT_SUPER, BIND_OUTSIDE, BIND_VAR} from "./scopeflags"
 
