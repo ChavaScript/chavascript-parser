@@ -10,3 +10,5 @@
 .travis.yml
 /src
 yarn-error.log
+.idea
+rollup.config.js
