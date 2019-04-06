@@ -1,29 +1,39 @@
-# ChavaScript Parser
+# ChavaScript
 
-A tokenizer/parser for the ChavaScript language, forked from [acorn](https://github.com/acornjs/acorn).
+The ChavaScript language transpiler
 
-## Installation
+https://chavascript.github.io/chavascript
 
-```sh
-npm install chavascript-parser
+# Installation
+
+```bash
+npm install chavascript
 ```
 
-## Usage
+# Usage
+
+The `chavascript` library exposes 3 functions:
+
+- `parse(input, options)` - which parses a given ChavaScript input string, with optional options according to acorn options object.
+- `transpile(input, options)` - which translates the given ChavaScript input string to JavaScript string, with optional options according to acorn options object.
+- `run(input, options)` - which executes the given ChavaScript input string, with optional options according to acorn options object.
+
+Examples:
 
 ```javascript
-const chsParser = require("chavascript-parser");
+const chavascript = require("chavascript")
 
-var code = `
+const code = `
 יכולת אחד() {
    יהי א = 12;
    בקרה.תעד(א);
 }
 `;
-const ast = chsParser.parse(code);
+const ast = chavascript.parse(code);
 console.log(JSON.stringify(ast, null, "  "));
 ```
 
-would produce the following abstract syntax tree:
+will produce an abstract syntax tree of the given input:
 ```
 {
   "type": "Program",
@@ -117,4 +127,48 @@ would produce the following abstract syntax tree:
   ],
   "sourceType": "script"
 }
+```
+
+```javascript
+const chavascript = require("chavascript")
+
+const code = `
+יכולת אחד() {
+   יהי א = 12;
+   בקרה.תעד(א);
+}
+`;
+const generated = chavascript.transpile(code);
+console.log(generated);
+
+```
+
+will produce and following output:
+
+```
+function ahd() {
+    let a = 12;
+    console.log(a);
+}
+```
+
+and
+
+```javascript
+const chavascript = require("chavascript")
+
+const code = `
+יכולת אחד() {
+   יהי א = 12;
+   בקרה.תעד(א);
+}
+אחד();
+`;
+chavascript.run(code);
+```
+
+will produce and following output:
+
+```
+12
 ```
